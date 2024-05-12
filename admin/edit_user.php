@@ -1,5 +1,4 @@
 <?php
-
 if (isset($_GET['id'])) {
     $user_id = $_GET['id'];
 } else {
@@ -10,25 +9,12 @@ if (isset($_GET['id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+    include dbconnect.php;
+
     $new_username = $_POST['username'];
     $new_email = $_POST['email'];
     $new_password = $_POST['password']; 
     $new_role = $_POST['role'];
-
-    // Database connection details
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "RES";
-
-    // Create connection
-    $conn = new mysqli($servername, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
-
 
     $sql = "UPDATE Users SET username='$new_username', email='$new_email', password='$new_password', role='$new_role' WHERE user_id=$user_id";
 
@@ -45,20 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 
-
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "RES";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include dbconnect.php;
 
 $user = null;
 
