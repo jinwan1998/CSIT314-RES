@@ -37,7 +37,7 @@
 
     <main>
         <?php
-        include 'dbconnect.php';
+        include './dbconnect.php';
         $action = isset($_GET['action']) ? $_GET['action'] : 'users';
 
         if ($action === 'users') {
