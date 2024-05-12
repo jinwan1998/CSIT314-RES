@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include dbconnect.php;
+include 'dbconnect.php';
 
 $sql = "SELECT u.user_id, u.username, u.email, AVG(r.rating) AS avg_rating
         FROM Users u

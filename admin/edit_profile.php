@@ -15,8 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $new_address = $_POST['address'];
     $new_bio = $_POST['bio'];
 
-    include dbconnect.php;
-
+    include 'dbconnect.php';
     // Update user profile details in the database
     $sql = "UPDATE UserProfiles SET first_name='$new_first_name', last_name='$new_last_name', address='$new_address', bio='$new_bio' WHERE user_id=$user_id";
 
@@ -35,7 +34,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 // Retrieve user profile details for the specified user ID
 // Database connection details (you can move this outside of the POST condition)
-include dbconnect.php;
+include 'dbconnect.php';
 
 $user_profile = null;
 

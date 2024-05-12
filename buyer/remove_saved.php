@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include dbconnect.php;
+include 'dbconnect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['listing_id'])) {
     $listing_id = $_GET['listing_id'];
