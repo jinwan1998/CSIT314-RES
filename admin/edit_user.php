@@ -21,7 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($conn->query($sql) === TRUE) {
         echo "User details updated successfully";
 
-        header("Location: admin.php?action=users");
+        header("Location: admin/admin.php?action=users");
         exit;
     } else {
         echo "Error updating user details: " . $conn->error;

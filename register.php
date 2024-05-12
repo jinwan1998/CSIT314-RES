@@ -51,7 +51,7 @@
             <input type="submit" value="Register">
         </form>
 
-        <p>Already have an account? <a href="login.php">Login here</a></p>
+        <p>Already have an account? <a href="index.php">Login here</a></p>
     </main>
 
     <footer>
