@@ -1,20 +1,7 @@
 <?php
 session_start(); 
 
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "res";
-
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
+include dbconnect.php;
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_listing'])) {
     $listingId = $_POST['listing_id'];

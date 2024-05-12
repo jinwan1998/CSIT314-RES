@@ -1,19 +1,7 @@
 <?php
 session_start(); // Start the PHP session
 
-// Database connection details
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "res";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include dbconnect.php;
 
 if (isset($_GET['listing_id'])) {
     $listingId = $_GET['listing_id'];

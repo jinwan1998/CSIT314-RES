@@ -64,19 +64,7 @@
             </thead>
             <tbody>
                 <?php
-                // Database connection details
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "RES";
-
-                // Create connection
-                $conn = new mysqli($servername, $username, $password, $dbname);
-
-                // Check connection
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
+                include dbconnect.php;
 
                 // Retrieve all user interactions from the database
                 $sql = "SELECT u.username, pi.interaction_type, pl.title, pi.interaction_timestamp

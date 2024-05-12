@@ -1,19 +1,7 @@
 <?php
 session_start();
 
-// Database connection details
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "res";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include dbconnect.php;
 
 $sql = "SELECT u.user_id, u.username, u.email, AVG(r.rating) AS avg_rating
         FROM Users u
