@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'dbconnect.php';
+include '../dbconnect.php';
 
 // Handle user authentication (login) if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

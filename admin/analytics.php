@@ -64,7 +64,7 @@
             </thead>
             <tbody>
                 <?php
-                include 'dbconnect.php';
+                include '../dbconnect.php';
 
                 // Retrieve all user interactions from the database
                 $sql = "SELECT u.username, pi.interaction_type, pl.title, pi.interaction_timestamp

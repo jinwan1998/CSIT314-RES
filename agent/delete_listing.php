@@ -1,6 +1,6 @@
 <?php
 session_start(); // Start the PHP session
-include 'dbconnect.php';
+include '../dbconnect.php';
 
 if (isset($_GET['listing_id'])) {
     $listingId = $_GET['listing_id'];

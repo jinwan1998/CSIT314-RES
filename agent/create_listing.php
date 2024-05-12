@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'dbconnect.php';
+include '../dbconnect.php';
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Real Estate Agent') {
     header("Location: login.php");

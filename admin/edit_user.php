@@ -9,7 +9,7 @@ if (isset($_GET['id'])) {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    include 'dbconnect.php';
+    include '../dbconnect.php';
 
     $new_username = $_POST['username'];
     $new_email = $_POST['email'];
@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $conn->close();
 }
 
-include 'dbconnect.php';
+include '../dbconnect.php';
 
 $user = null;
 
