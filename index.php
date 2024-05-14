@@ -1,16 +1,35 @@
 <?php
 session_start(); 
 
-if (isset($_SESSION['username'])) {
-    header("Location: dashboard.php"); 
-    exit();
+if (isset($_SESSION['role'])) {
+    switch ($_SESSION['role']) {
+        case 'System Administrator':
+            header("Location: admin/admin.php");
+            break;
+        case 'Real Estate Agent':
+            header("Location: agent/agent.php");
+            break;
+        case 'Buyer':
+            header("Location: buyer/buyer.php");
+            break;
+        case 'Seller':
+            header("Location: seller/seller.php");
+            break;
+        default:
+            header("Location: index.php");
+            break;
+    }
 }
 
 $error_message = '';
 if (isset($_GET['error'])) {
     if ($_GET['error'] == 1) {
         $error_message = 'Invalid username or password. Please try again.';
-    } elseif ($_GET['error'] == 'suspended') {
+    }
+    elseif ($_GET['error'] == 2) {
+        $error_message = 'Please login first.';
+    } 
+    elseif ($_GET['error'] == 'suspended') {
         $error_message = 'Your account is suspended. Please contact the administrator.';
     }
 }

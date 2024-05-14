@@ -1,49 +1,41 @@
 <?php
 session_start();
-include '../dbconnect.php';
+require_once '../dbconnect.php';
+require_once '../class_user.php';
+require_once 'BuyerController.php';
 
-// Handle user authentication (login) if form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    
-    $sql = "SELECT * FROM Users WHERE username = '$username' AND password = '$password'";
-    $result = $conn->query($sql);
-    
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        $_SESSION['user_id'] = $user['user_id'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['role'] = $user['role'];
-
-        switch ($user['role']) {
-            case 'Buyer':
-                header("Location: buyer.php");
-                exit();
-            case 'Seller':
-                header("Location: seller.php");
-                exit();
-            default:
-                header("Location: login.php?error=1");
-                exit();
-        }
-    } else {
-        header("Location: login.php?error=1");
-        exit();
+// Ensure redirect to login page if user is not logged in or correct page for respective role
+if (isset($_SESSION['role'])) {
+    switch ($_SESSION['role']) {
+        case 'System Administrator':
+            header("Location: ../admin/admin.php");
+            break;
+        case 'Real Estate Agent':
+            header("Location: ../agent/agent.php");
+            break;
+        case 'Seller':
+            header("Location: ../seller/seller.php");
+            break;
     }
 }
+else {
+    header("Location: ../index.php?error=2");
+}
+
+$buyerController = new BuyerController($conn);
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['listing_id'])) {
     $listing_id = $_GET['listing_id'];
     $buyer_id = $_SESSION['user_id'];
 
-    $save_query = "INSERT INTO SavedListings (buyer_id, listing_id) VALUES ($buyer_id, $listing_id)";
-    if ($conn->query($save_query) === TRUE) {
+    // Call the saveListing function from the BuyerController instance
+    if ($buyerController->saveListing($buyer_id, $listing_id)) {
+        // Redirect to buyer.php after successfully saving the listing
         header("Location: buyer.php");
         exit();
     } else {
-        echo "Error: " . $conn->error;
+        // Handle error if the listing cannot be saved
+        echo "Error: Listing could not be saved.";
     }
 }
 
@@ -51,27 +43,32 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_listing_id'])) {
     $listing_id = $_GET['remove_listing_id'];
     $buyer_id = $_SESSION['user_id'];
 
-    $remove_query = "DELETE FROM SavedListings WHERE buyer_id = $buyer_id AND listing_id = $listing_id";
-    if ($conn->query($remove_query) === TRUE) {
+    // Call the removeSavedListing function from the BuyerController instance
+    if ($buyerController->removeSavedListing($buyer_id, $listing_id)) {
+        // Redirect to buyer.php after successfully removing the listing
         header("Location: buyer.php");
         exit();
     } else {
-        echo "Error: " . $conn->error;
+        // Handle error if the listing cannot be removed
+        echo "Error: Listing could not be removed.";
     }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buyer Dashboard - Real Estate System</title>
-    <link rel="stylesheet" href="buyer.css"> 
+    <link rel="stylesheet" href="buyer.css">
 </head>
+
 <body>
     <header>
-        <h1>Welcome, <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Buyer'; ?>!</h1>
+        <h1>Welcome, <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Buyer'; ?>!
+        </h1>
         <nav>
             <ul>
                 <li><a href="#">Home</a></li>
@@ -168,13 +165,14 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_listing_id'])) {
         </section>
 
 
-        
+
     </main>
 
     <footer>
         &copy; <?php echo date("Y"); ?> Real Estate System
     </footer>
 </body>
+
 </html>
 
 <?php

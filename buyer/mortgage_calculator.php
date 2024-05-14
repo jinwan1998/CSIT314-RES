@@ -1,61 +1,45 @@
 <?php
-// Function to calculate monthly repayment
-function calculateMonthlyRepayment($loan_amount, $interest_rate, $loan_term_months)
-{
-    // Convert interest rate to decimal and monthly interest rate
-    $monthly_interest_rate = ($interest_rate / 100) / 12;
+require_once 'MortgageCalculatorController.php';
 
-    // Calculate monthly repayment using the formula
-    $numerator = $loan_amount * $monthly_interest_rate * pow(1 + $monthly_interest_rate, $loan_term_months);
-    $denominator = pow(1 + $monthly_interest_rate, $loan_term_months) - 1;
-    $monthly_repayment = $numerator / $denominator;
-
-    // Return monthly repayment amount
-    return $monthly_repayment;
-}
-
-// Function to format currency amount
-function formatCurrency($amount)
-{
-    return '$' . number_format($amount, 2);
-}
-
-$loan_amount = $interest_rate = $years = $months = $loan_term_months = $monthly_repayment = 0;
+$calculatorManager = new MortgageCalculatorManager();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['calculate'])) {
-
-    $loan_amount = isset($_POST['loan_amount']) ? floatval($_POST['loan_amount']) : 0;
-    $interest_rate = isset($_POST['interest_rate']) ? floatval($_POST['interest_rate']) : 0;
+    $loanAmount = isset($_POST['loan_amount']) ? floatval($_POST['loan_amount']) : 0;
+    $interestRate = isset($_POST['interest_rate']) ? floatval($_POST['interest_rate']) : 0;
     $years = isset($_POST['years']) ? intval($_POST['years']) : 0;
     $months = isset($_POST['months']) ? intval($_POST['months']) : 0;
 
-    $loan_term_months = $years * 12 + $months;
+    $loanTermMonths = $years * 12 + $months;
 
-    if ($loan_amount > 0 && $interest_rate > 0 && $loan_term_months > 0) {
-        // Calculate monthly repayment
-        $monthly_repayment = calculateMonthlyRepayment($loan_amount, $interest_rate, $loan_term_months);
+    if ($loanAmount > 0 && $interestRate > 0 && $loanTermMonths > 0) {
+        // Create a new mortgage calculator instance
+        $calculator = new MortgageCalculator($loanAmount, $interestRate, $loanTermMonths);
+        // Add calculator to the manager with a unique property name
+        $calculatorManager->addCalculator('Property', $calculator);
     }
 }
+
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mortgage Calculator</title>
-    <link rel="stylesheet" href="buyer.css"> 
-
+    <link rel="stylesheet" href="buyer.css">
 </head>
+
 <body>
     <h2>Mortgage Calculator</h2>
-    <a href="buyer.php">Home</a> 
+    <a href="buyer.php">Home</a>
 
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="loan_amount">Loan Amount:</label>
-        <input type="number" id="loan_amount" name="loan_amount" step="0.01" value="<?php echo $loan_amount; ?>" required><br><br>
+        <input type="number" id="loan_amount" name="loan_amount" step="0.01" required><br><br>
         <label for="interest_rate">Interest Rate (% per annum):</label>
-        <input type="number" id="interest_rate" name="interest_rate" step="0.01" value="<?php echo $interest_rate; ?>" required><br><br>
+        <input type="number" id="interest_rate" name="interest_rate" step="0.01" required><br><br>
         <label for="loan_term">Loan Term:</label>
         <select name="years" id="years" required>
             <option value="" selected disabled>Select Years</option>
@@ -72,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['calculate'])) {
         <button type="submit" name="calculate">Calculate</button>
     </form>
 
-    <?php if ($monthly_repayment > 0): ?>
+    <?php if (!empty($calculatorManager->getCalculator('Property'))): ?>
         <h3>Monthly Repayment Details</h3>
         <table>
             <tr>
@@ -80,14 +64,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['calculate'])) {
                 <th>Interest Rate</th>
                 <th>Loan Term</th>
                 <th>Monthly Repayment</th>
+                <th>Total Interest</th>
             </tr>
             <tr>
-                <td><?php echo formatCurrency($loan_amount); ?></td>
-                <td><?php echo $interest_rate; ?>%</td>
+                <td><?php echo formatCurrency($loanAmount); ?></td>
+                <td><?php echo $interestRate; ?>%</td>
                 <td><?php echo $years; ?> Year<?php echo $years !== 1 ? 's' : ''; ?>, <?php echo $months; ?> Month<?php echo $months !== 1 ? 's' : ''; ?></td>
-                <td><?php echo formatCurrency($monthly_repayment); ?></td>
+                <td><?php echo formatCurrency($calculatorManager->getCalculator('Property')->getMonthlyRepayment()); ?></td>
+                <td><?php echo formatCurrency($calculatorManager->getCalculator('Property')->getTotalInterest()); ?></td>
             </tr>
         </table>
     <?php endif; ?>
+
+    <?php
+    function formatCurrency($amount)
+    {
+        return '$' . number_format($amount, 2);
+    }
+    ?>
 </body>
+
 </html>

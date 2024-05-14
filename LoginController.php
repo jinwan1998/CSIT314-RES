@@ -30,12 +30,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: seller/seller.php");
                 break;
             default:
-                header("Location: login.php?error=1");
+                header("Location: index.php?error=1");
                 break;
         }
         exit;
     } else {
-        header("Location: login.php?error=1");
+        header("Location: index.php?error=1");
         exit;
     }
 }
