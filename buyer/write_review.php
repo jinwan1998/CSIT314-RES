@@ -2,6 +2,9 @@
 session_start();
 
 include '../dbconnect.php';
+include 'ReviewController.php';
+
+$review = new ReviewController();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['agent_id'], $_POST['rating'], $_POST['comments'])) {
@@ -10,16 +13,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $rating = $_POST['rating'];
         $comments = $_POST['comments'];
 
-        $insert_review = "INSERT INTO Reviews (user_id, agent_id, rating, comments) VALUES (?, ?, ?, ?)";
-        $stmt = $conn->prepare($insert_review);
-        $stmt->bind_param("iiis", $user_id, $agent_id, $rating, $comments);
+        $review->writeReview($user_id, $agent_id, $rating, $comments);
 
-        if ($stmt->execute()) {
-            header("Location: agent_ratings.php");
-            exit();
-        } else {
-            echo "Error: " . $conn->error;
-        }
     } else {
         echo "Incomplete form data";
     }
