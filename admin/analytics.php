@@ -38,7 +38,7 @@
                 <li><a href="admin.php?action=users">User Accounts</a></li>
                 <li><a href="admin.php?action=profiles">User Profiles</a></li>
                 <li><a href="analytics.php">Analytics</a></li>
-                <li><a href="logout.php">Logout</a></li>
+                <li><a href="../logout.php">Logout</a></li>
             </ul>
         </nav>
     </header>
