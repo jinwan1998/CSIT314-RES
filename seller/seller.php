@@ -45,12 +45,14 @@ include '../dbconnect.php';
                 $sellerId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 
                 if ($sellerId !== null) {
-                    $listingsQuery = "SELECT pl.*, COUNT(pi.interaction_id) AS views, COUNT(sl.id) AS shortlisted
-                                      FROM PropertyListings pl
-                                      LEFT JOIN PropertyInteractions pi ON pl.listing_id = pi.listing_id AND pi.interaction_type = 'View'
-                                      LEFT JOIN SavedListings sl ON pl.listing_id = sl.listing_id
-                                      WHERE pl.agent_id = $sellerId
-                                      GROUP BY pl.listing_id";
+                            $listingsQuery = "SELECT pl.*, 
+                            COUNT(DISTINCT pi.interaction_id) AS views, 
+                            COUNT(DISTINCT sl.listing_id) AS shortlisted
+                            FROM PropertyListings pl
+                            LEFT JOIN PropertyInteractions pi ON pl.listing_id = pi.listing_id AND pi.interaction_type = 'View'
+                            LEFT JOIN SavedListings sl ON pl.listing_id = sl.listing_id
+                            WHERE pl.agent_id = $sellerId
+                            GROUP BY pl.listing_id";
                     $listingsResult = $conn->query($listingsQuery);
 
                     if ($listingsResult && $listingsResult->num_rows > 0) {
