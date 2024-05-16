@@ -22,36 +22,18 @@ else {
     header("Location: ../index.php?error=2");
 }
 
-$buyerController = new BuyerController($conn);
+$buyerController = new BuyerController($conn, $_SESSION['user_id']);
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['listing_id'])) {
     $listing_id = $_GET['listing_id'];
     $buyer_id = $_SESSION['user_id'];
-
-    // Call the saveListing function from the BuyerController instance
-    if ($buyerController->saveListing($buyer_id, $listing_id)) {
-        // Redirect to buyer.php after successfully saving the listing
-        header("Location: buyer.php");
-        exit();
-    } else {
-        // Handle error if the listing cannot be saved
-        echo "Error: Listing could not be saved.";
-    }
+    $buyerController->saveListing($listing_id);
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_listing_id'])) {
     $listing_id = $_GET['remove_listing_id'];
     $buyer_id = $_SESSION['user_id'];
-
-    // Call the removeSavedListing function from the BuyerController instance
-    if ($buyerController->removeSavedListing($buyer_id, $listing_id)) {
-        // Redirect to buyer.php after successfully removing the listing
-        header("Location: buyer.php");
-        exit();
-    } else {
-        // Handle error if the listing cannot be removed
-        echo "Error: Listing could not be removed.";
-    }
+    $buyerController->removeSavedListing($listing_id);
 }
 ?>
 
@@ -96,26 +78,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_listing_id'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    // Retrieve and display new property listings
-                    $listingsQuery = "SELECT * FROM PropertyListings WHERE status = 'Active'";
-                    $listingsResult = $conn->query($listingsQuery);
-
-                    if ($listingsResult->num_rows > 0) {
-                        while ($row = $listingsResult->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>{$row['title']}</td>";
-                            echo "<td>{$row['description']}</td>";
-                            echo "<td>{$row['property_type']}</td>";
-                            echo "<td>$" . number_format($row['price'], 2) . "</td>";
-                            echo "<td>{$row['location']}</td>";
-                            echo "<td><a href='buyer.php?listing_id={$row['listing_id']}'>Save</a></td>"; // Add save functionality
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='6'>No new listings found.</td></tr>";
-                    }
-                    ?>
+                    <?php $buyerController->displayListing(); ?>
                 </tbody>
             </table>
         </section>
@@ -135,31 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_listing_id'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                    // Retrieve and display saved listings for the current user
-                    if (isset($_SESSION['user_id'])) {
-                        $buyerId = $_SESSION['user_id'];
-                        $savedQuery = "SELECT p.* FROM PropertyListings p
-                                       JOIN SavedListings s ON p.listing_id = s.listing_id
-                                       WHERE s.buyer_id = $buyerId";
-                        $savedResult = $conn->query($savedQuery);
-
-                        if ($savedResult->num_rows > 0) {
-                            while ($row = $savedResult->fetch_assoc()) {
-                                echo "<tr>";
-                                echo "<td>{$row['title']}</td>";
-                                echo "<td>{$row['description']}</td>";
-                                echo "<td>{$row['property_type']}</td>";
-                                echo "<td>$" . number_format($row['price'], 2) . "</td>";
-                                echo "<td>{$row['location']}</td>";
-                                echo "<td><a href='buyer.php?remove_listing_id={$row['listing_id']}'>Remove</a></td>"; // Add remove functionality
-                                echo "</tr>";
-                            }
-                        } else {
-                            echo "<tr><td colspan='6'>No saved listings found.</td></tr>";
-                        }
-                    }
-                    ?>
+                    <?php $buyerController->displaySavedListing(); ?>
                 </tbody>
             </table>
         </section>

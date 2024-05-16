@@ -2,33 +2,13 @@
 session_start();
 
 include '../dbconnect.php';
+include 'ReviewController.php';
+
+$ReviewController = new ReviewController($conn);
 
 if (isset($_GET['agent_id'])) {
     $agent_id = $_GET['agent_id'];
-
-    $sql = "SELECT u.username, r.rating, r.comments
-            FROM Reviews r
-            INNER JOIN Users u ON r.user_id = u.user_id
-            WHERE r.agent_id = $agent_id";
-    $result = $conn->query($sql);
-
-    if ($result->num_rows > 0) {
-        echo "<h2>Agent Comments</h2>";
-        echo "<table>";
-        echo "<thead><tr><th>User</th><th>Rating</th><th>Comment</th></tr></thead>";
-        echo "<tbody>";
-        while ($row = $result->fetch_assoc()) {
-            echo "<tr>";
-            echo "<td>{$row['username']}</td>";
-            echo "<td>{$row['rating']}</td>";
-            echo "<td>{$row['comments']}</td>";
-            echo "</tr>";
-        }
-        echo "</tbody>";
-        echo "</table>";
-    } else {
-        echo "No comments found for this agent.";
-    }
+    $ReviewController->displayAgentComments($agent_id);
 } else {
     echo "Agent ID not specified.";
 }

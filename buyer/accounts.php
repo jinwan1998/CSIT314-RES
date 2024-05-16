@@ -2,6 +2,9 @@
 session_start();
 
 include '../dbconnect.php';
+include 'BuyerController.php';
+
+$buyerController = new BuyerController($conn, $_SESSION['user_id']);
 
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
@@ -14,10 +17,6 @@ $user_id = $_SESSION['user_id'];
 // Query to fetch user information
 $user_query = "SELECT * FROM Users WHERE user_id = $user_id";
 $user_result = $conn->query($user_query);
-
-// Query to fetch user's transactions
-$transaction_query = "SELECT * FROM Transactions WHERE user_id = $user_id ORDER BY transaction_date DESC";
-$transaction_result = $conn->query($transaction_query);
 
 // Close database connection
 $conn->close();
@@ -58,20 +57,7 @@ $conn->close();
             </tr>
         </thead>
         <tbody>
-            <?php
-            if ($transaction_result->num_rows > 0) {
-                while ($row = $transaction_result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>{$row['transaction_id']}</td>";
-                    echo "<td>{$row['amount']}</td>";
-                    echo "<td>{$row['transaction_date']}</td>";
-                    echo "<td>{$row['description']}</td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='4'>No transactions found.</td></tr>";
-            }
-            ?>
+            <?php $buyerController->displayTransaction(); ?>
         </tbody>
     </table>
 </body>

@@ -4,7 +4,7 @@ session_start();
 include '../dbconnect.php';
 include 'ReviewController.php';
 
-$review = new ReviewController();
+$review = new ReviewController($conn);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['agent_id'], $_POST['rating'], $_POST['comments'])) {

@@ -2,14 +2,9 @@
 session_start();
 
 include '../dbconnect.php';
+include 'ReviewController.php';
 
-$sql = "SELECT u.user_id, u.username, u.email, AVG(r.rating) AS avg_rating
-        FROM Users u
-        LEFT JOIN Reviews r ON u.user_id = r.agent_id
-        WHERE u.role = 'Real Estate Agent'
-        GROUP BY u.user_id, u.username, u.email";
-$result = $conn->query($sql);
-
+$ReviewController = new ReviewController($conn);
 ?>
 
 <!DOCTYPE html>
@@ -37,21 +32,7 @@ $result = $conn->query($sql);
             </tr>
         </thead>
         <tbody>
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo "<tr>";
-                    echo "<td>{$row['username']}</td>";
-                    echo "<td>{$row['email']}</td>";
-                    echo "<td>" . number_format($row['avg_rating'], 1) . "</td>";
-                    echo "<td><a href='agent_comments.php?agent_id={$row['user_id']}'>View Comments</a></td>";
-                    echo "<td><a href='write_review.php?agent_id={$row['user_id']}'>Write Review</a></td>";
-                    echo "</tr>";
-                }
-            } else {
-                echo "<tr><td colspan='5'>No agents found.</td></tr>";
-            }
-            ?>
+            <?php $ReviewController->displayAgentRatings(); ?>
         </tbody>
     </table>
 </body>
