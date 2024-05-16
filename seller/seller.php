@@ -1,9 +1,17 @@
 <?php
-session_start(); // Start the PHP session
+session_start();
+require_once '../dbconnect.php'; 
+require_once 'SellerController.php';
+require_once 'SellerView.php';
 
-include '../dbconnect.php';
+$sellerController = new SellerController($conn);
+$sellerId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+$listings = [];
+
+if ($sellerId !== null) {
+    $listings = $sellerController->getSellerListings($sellerId);
+}
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,56 +48,12 @@ include '../dbconnect.php';
                 </tr>
             </thead>
             <tbody>
-                <?php
-                // Retrieve seller's user_id from session
-                $sellerId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
-
-                if ($sellerId !== null) {
-                            $listingsQuery = "SELECT pl.*, 
-                            COUNT(DISTINCT pi.interaction_id) AS views, 
-                            COUNT(DISTINCT sl.listing_id) AS shortlisted
-                            FROM PropertyListings pl
-                            LEFT JOIN PropertyInteractions pi ON pl.listing_id = pi.listing_id AND pi.interaction_type = 'View'
-                            LEFT JOIN SavedListings sl ON pl.listing_id = sl.listing_id
-                            WHERE pl.agent_id = $sellerId
-                            GROUP BY pl.listing_id";
-                    $listingsResult = $conn->query($listingsQuery);
-
-                    if ($listingsResult && $listingsResult->num_rows > 0) {
-                        while ($row = $listingsResult->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td>{$row['title']}</td>";
-                            echo "<td>{$row['description']}</td>";
-                            echo "<td>{$row['property_type']}</td>";
-                            echo "<td>$" . number_format($row['price'], 2) . "</td>";
-                            echo "<td>{$row['location']}</td>";
-                            echo "<td>{$row['status']}</td>";
-                            echo "<td>{$row['views']}</td>";
-                            echo "<td>{$row['shortlisted']}</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='8'>No listings found.</td></tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='8'>Seller not logged in.</td></tr>";
-                }
-                ?>
+                <?php SellerView::renderListings($listings); ?>
             </tbody>
         </table>
-
-
-
-
-
-
-
-    <footer>
+        <footer>
         &copy; <?php echo date("Y"); ?> Real Estate System
     </footer>
+    </main>
 </body>
 </html>
-
-<?php
-$conn->close();
-?>
