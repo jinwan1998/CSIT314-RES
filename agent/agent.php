@@ -23,7 +23,7 @@ $agentController = new AgentController($conn);
         <h1>Welcome, <?php echo isset($_SESSION['username']) ? htmlspecialchars($_SESSION['username']) : 'Agent'; ?>!</h1>
         <nav>
             <ul>
-                <li><a href="../logout.php">Logout</a></li>
+                <li><a href="../LogoutController.php">Logout</a></li>
             </ul>
         </nav>
     </header>

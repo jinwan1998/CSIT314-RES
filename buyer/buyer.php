@@ -58,7 +58,7 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                 <li><a href="mortgage_calculator.php">Mortgage Calculator</a></li>
                 <li><a href="agent_ratings.php">Agent Ratings & Reviews</a></li>
                 <li><a href="accounts.php">Account</a></li>
-                <li><a href="../logout.php">Logout</a></li>
+                <li><a href="../LogoutController.php">Logout</a></li>
             </ul>
         </nav>
     </header>

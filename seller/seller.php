@@ -27,7 +27,7 @@ if ($sellerId !== null) {
             <ul>
                 <li><a href="seller.php">My Property Listings</a></li>
                 <li><a href="../buyer/agent_ratings.php">Rate Agents</a></li>
-                <li><a href="../logout.php">Logout</a></li>
+                <li><a href="../LogoutController.php">Logout</a></li>
             </ul>
         </nav>
     </header>
