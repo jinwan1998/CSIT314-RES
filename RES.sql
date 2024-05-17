@@ -116,3 +116,13 @@ VALUES
     (3, 1),
     (3, 2),
     (4, 1);
+
+CREATE TABLE mortgage_calculations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    property_name VARCHAR(255) NOT NULL,
+    loan_amount DECIMAL(10, 2) NOT NULL,
+    interest_rate DECIMAL(5, 2) NOT NULL,
+    loan_term_months INT NOT NULL,
+    monthly_repayment DECIMAL(10, 2) NOT NULL,
+    total_interest DECIMAL(10, 2) NOT NULL
+);
