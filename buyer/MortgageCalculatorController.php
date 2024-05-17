@@ -1,4 +1,52 @@
 <?php
+class MortgageCalculatorController
+{
+    private $calculatorManager;
+
+    public function __construct()
+    {
+        $this->calculatorManager = new MortgageCalculatorManager();
+    }
+
+    public function handleRequest()
+    {
+        if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['calculate'])) {
+            return $this->processForm();
+        }
+        return null;
+    }
+
+    private function processForm()
+    {
+        try {
+            $propertyName = isset($_POST['property_name']) ? $_POST['property_name'] : '';
+            $loanAmount = isset($_POST['loan_amount']) ? floatval($_POST['loan_amount']) : 0;
+            $interestRate = isset($_POST['interest_rate']) ? floatval($_POST['interest_rate']) : 0;
+            $years = isset($_POST['years']) ? intval($_POST['years']) : 0;
+            $months = isset($_POST['months']) ? intval($_POST['months']) : 0;
+
+            $loanTermMonths = $years * 12 + $months;
+
+            if ($propertyName && $loanAmount > 0 && $interestRate > 0 && $loanTermMonths > 0) {
+                $calculator = new MortgageCalculator($loanAmount, $interestRate, $loanTermMonths);
+                $this->calculatorManager->addCalculator($propertyName, $calculator);
+                $this->calculatorManager->saveCalculations();  // Save the calculations
+                return $calculator;
+            } else {
+                throw new Exception("All input fields are required and must be greater than zero.");
+            }
+        } catch (Exception $e) {
+            echo "<p>Error: " . $e->getMessage() . "</p>";
+        }
+        return null;
+    }
+
+    public function getCalculatorManager()
+    {
+        return $this->calculatorManager;
+    }
+}
+
 class MortgageCalculator
 {
     private $loanAmount;
@@ -16,25 +64,19 @@ class MortgageCalculator
         $this->calculateTotalInterest();
     }
 
-    public function setLoanAmount($loanAmount)
+    public function getLoanAmount()
     {
-        $this->loanAmount = $loanAmount;
-        $this->calculateMonthlyRepayment();
-        $this->calculateTotalInterest();
+        return $this->loanAmount;
     }
 
-    public function setInterestRate($interestRate)
+    public function getInterestRate()
     {
-        $this->interestRate = $interestRate;
-        $this->calculateMonthlyRepayment();
-        $this->calculateTotalInterest();
+        return $this->interestRate;
     }
 
-    public function setLoanTermMonths($loanTermMonths)
+    public function getLoanTermMonths()
     {
-        $this->loanTermMonths = $loanTermMonths;
-        $this->calculateMonthlyRepayment();
-        $this->calculateTotalInterest();
+        return $this->loanTermMonths;
     }
 
     public function getMonthlyRepayment()
@@ -81,53 +123,35 @@ class MortgageCalculatorManager
     }
 
     public function compareCalculations()
-{
-    // This method can be used to compare calculations for different properties
-    // For example, you can compare monthly repayments or total interest paid for each property
-    // You can implement any comparison logic here based on your requirements
-
-    $calculations = [];
-    foreach ($this->calculators as $propertyName => $calculator) {
-        $calculations[$propertyName] = [
-            'monthly_repayment' => $calculator->getMonthlyRepayment(),
-            'total_interest' => $calculator->getTotalInterest()
-        ];
+    {
+        $calculations = [];
+        foreach ($this->calculators as $propertyName => $calculator) {
+            $calculations[$propertyName] = [
+                'monthly_repayment' => $calculator->getMonthlyRepayment(),
+                'total_interest' => $calculator->getTotalInterest()
+            ];
+        }
+        return $calculations;
     }
 
-    // Implement comparison logic here
-    // For example, you can compare the calculations and display the results
+    public function saveCalculations()
+    {
+        try {
+            $pdo = new PDO("mysql:host=localhost;dbname=mydatabase", "username", "password");
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-    return $calculations;
-}
+            $stmt = $pdo->prepare("INSERT INTO mortgage_calculations (property_name, monthly_repayment, total_interest) VALUES (?, ?, ?)");
 
-public function saveCalculations()
-{
-    // This method can be used to save mortgage calculations for different properties
-    // You can save the calculations to a database, file, or any other storage mechanism
-
-    // Implement the saving logic here
-    // For example, you can save the calculations to a database
-
-    // Connect to database
-    $pdo = new PDO("mysql:host=localhost;dbname=mydatabase", "username", "password");
-
-    // Prepare SQL statement
-    $stmt = $pdo->prepare("INSERT INTO mortgage_calculations (property_name, monthly_repayment, total_interest) VALUES (?, ?, ?)");
-
-    // Iterate over calculators and save calculations to database
-    foreach ($this->calculators as $propertyName => $calculator) {
-        // Bind parameters
-        $stmt->bindParam(1, $propertyName);
-        $stmt->bindParam(2, $calculator->getMonthlyRepayment());
-        $stmt->bindParam(3, $calculator->getTotalInterest());
-
-        // Execute SQL statement
-        $stmt->execute();
+            foreach ($this->calculators as $propertyName => $calculator) {
+                $stmt->execute([
+                    $propertyName,
+                    $calculator->getMonthlyRepayment(),
+                    $calculator->getTotalInterest()
+                ]);
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
+        }
     }
-
-    // Close database connection
-    $pdo = null;
-}
-
 }
 ?>
