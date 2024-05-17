@@ -1,7 +1,14 @@
 <?php
 session_start(); 
 include '../dbconnect.php';
+include 'AgentController.php';
+
+$agentId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
+
+$agentController = new AgentController($conn);
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -38,14 +45,10 @@ include '../dbconnect.php';
             </thead>
             <tbody>
                 <?php
-                $agentId = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
-
                 if ($agentId !== null) {
-                    $listingsQuery = "SELECT * FROM PropertyListings WHERE agent_id = $agentId";
-                    $listingsResult = $conn->query($listingsQuery);
-
-                    if ($listingsResult && $listingsResult->num_rows > 0) {
-                        while ($row = $listingsResult->fetch_assoc()) {
+                    $listings = $agentController->getPropertyListings($agentId);
+                    if (!empty($listings)) {
+                        foreach ($listings as $row) { 
                             echo "<tr>";
                             echo "<td>{$row['title']}</td>";
                             echo "<td>{$row['description']}</td>";
@@ -82,23 +85,20 @@ include '../dbconnect.php';
                 </tr>
             </thead>
             <tbody>
-                <?php
-                $reviewsQuery = "SELECT r.rating, r.comments, u.username AS buyer_name
-                                 FROM Reviews r
-                                 INNER JOIN Users u ON r.user_id = u.user_id
-                                 WHERE r.agent_id = $agentId";
-                $reviewsResult = $conn->query($reviewsQuery);
-
-                if ($reviewsResult && $reviewsResult->num_rows > 0) {
-                    while ($reviewRow = $reviewsResult->fetch_assoc()) {
+            <?php
+                if ($agentId !== null) {
+                    $reviews = $agentController->getAgentReviews($agentId);
+                    if (!empty($reviews)) {
+                        foreach ($reviews as $reviewRow) {
                         echo "<tr>";
                         echo "<td>{$reviewRow['buyer_name']}</td>";
                         echo "<td>{$reviewRow['rating']}</td>";
                         echo "<td>{$reviewRow['comments']}</td>";
                         echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='3'>No reviews found.</td></tr>";
+                        }
+                    } else {
+                        echo "<tr><td colspan='3'>No reviews found.</td></tr>";
+                        }
                 }
                 ?>
             </tbody>
@@ -115,3 +115,5 @@ include '../dbconnect.php';
 // Close database connection
 $conn->close();
 ?>
+
+
