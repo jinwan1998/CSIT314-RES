@@ -112,7 +112,6 @@ $agentController = new AgentController($conn);
 </html>
 
 <?php
-// Close database connection
 $conn->close();
 ?>
 

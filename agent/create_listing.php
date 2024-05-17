@@ -1,31 +1,30 @@
 <?php
 session_start();
 include '../dbconnect.php';
+require_once 'AgentController.php';
+
 
 if (!isset($_SESSION['username']) || $_SESSION['role'] !== 'Real Estate Agent') {
     header("Location: login.php");
     exit();
 }
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+$agentController = new AgentController($conn);
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $propertyType = $_POST['property_type'];
     $price = $_POST['price'];
     $location = $_POST['location'];
-
-
     $agentId = $_SESSION['user_id']; 
     $status = 'Active'; 
-    $sql = "INSERT INTO PropertyListings (agent_id, title, description, property_type, price, location, status)
-            VALUES ($agentId, '$title', '$description', '$propertyType', $price, '$location', '$status')";
 
-    if ($conn->query($sql) === TRUE) {
-
+    if ($agentController->addPropertyListing($agentId, $title, $description, $propertyType, $price, $location, $status)) {
         header("Location: agent.php");
         exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "Error: Unable to add new listing.";
     }
 }
 

@@ -1,6 +1,9 @@
 <?php
 session_start(); 
 include '../dbconnect.php';
+include_once 'AgentController.php';
+
+$agentController = new AgentController($conn);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_listing'])) {
     $listingId = $_POST['listing_id'];
@@ -9,37 +12,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['update_listing'])) {
     $property_type = $_POST['property_type'];
     $price = $_POST['price'];
     $location = $_POST['location'];
-
-
-    $sql = "UPDATE PropertyListings SET
-                title = '$title',
-                description = '$description',
-                property_type = '$property_type',
-                price = $price,
-                location = '$location',
-                updated_at = NOW()
-            WHERE listing_id = $listingId";
-
-    if ($conn->query($sql) === TRUE) {
+    
+    if ($agentController->updatePropertyListing($listingId, $title, $description, $property_type, $price, $location)) {
         header("Location: agent.php");
         exit();
     } else {
-
         echo "Error updating listing: " . $conn->error;
     }
 }
 
-
 if (isset($_GET['listing_id'])) {
-    $listingId = $_GET['listing_id'];
-
-
-    $listingQuery = "SELECT * FROM PropertyListings WHERE listing_id = $listingId";
-    $listingResult = $conn->query($listingQuery);
-
-    if ($listingResult && $listingResult->num_rows > 0) {
-        $listing = $listingResult->fetch_assoc();
-    } else {
+    $listing = $agentController->getPropertyListingById($_GET['listing_id']);
+    if (!$listing) {
         echo "Listing not found.";
         exit();
     }
@@ -47,7 +31,6 @@ if (isset($_GET['listing_id'])) {
     echo "Listing ID not provided.";
     exit();
 }
-
 ?>
 
 <!DOCTYPE html>
