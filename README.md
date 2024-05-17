@@ -3,16 +3,16 @@
 <h2>Project Overview</h2>
 This repository contains the source code for the Real Estate System (RES) project for the CSIT314 Software Development Methodologies course at the University of Wollongong. The system is designed to manage real estate transactions, including functionalities for system admins, real estate agents, sellers, and buyers.
 <br><br>
-Features <br>
-Admin Management: Manage system admins, real estate agents, sellers, and buyers. <br>
-Property Listings: Add, view, and manage property listings. <br>
-Buyer Features: Search, view, and shortlist properties. <br>
-Seller Features: Track property views and shortlists. <br>
-Mortgage Calculation: Calculate mortgage options for buyers. <br>
-Agent Reviews: Review and rate real estate agents. <br>
+Features <be>
+<li>Admin Management: Manage system admins, real estate agents, sellers, and buyers.</li> <br>
+<li>Property Listings: Add, view, and manage property listings.</li> <br>
+<li>Buyer Features: Search, view, and shortlist properties.</li> <br>
+<li>Seller Features: Track property views and shortlists.</li> <br>
+<li>Mortgage Calculation: Calculate mortgage options for buyers.</li> <br>
+<li>Agent Reviews: Review and rate real estate agents.</li> <br>
 
 <h2>Tech Stack</h2>
-Frontend: HTML, CSS, JavaScript<br>
+Frontend: HTML, CSS <br>
 Backend: PHP<br>
 Database: MySQL<br>
 
@@ -29,18 +29,18 @@ LoginController.php: Handles login functionalities. <br>
 RegistrationController.php: Handles user registration functionalities. <br>
 RES.sql: SQL script to set up the database schema. <br>
 
-<h2>Installation</h2> <br>
-Clone the repository:
-git clone https://github.com/Levaote/CSIT314-RES.git
+<h2>Installation</h2>
+1)Clone the repository:
+git clone https://github.com/Levaote/CSIT314-RES.git <br><br>
 
-Navigate to the project directory:
+2)Navigate to the project directory:
 cd CSIT314-RES
 
-Set up the database using the RES.sql script.
+3)Set up the database using the RES.sql script.
 
-Configure the database connection in dbconnect.php.
+4)Configure the database connection in dbconnect.php.
 
-Run the application on a local server (e.g., using XAMPP or WAMP).
+5)Run the application on a local server (e.g., using XAMPP or WAMP).
 
 <h2>Usage</h2>
 Access the application via http://localhost/CSIT314-RES/.
