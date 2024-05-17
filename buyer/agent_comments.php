@@ -25,5 +25,4 @@ $conn->close();
     <link rel="stylesheet" href="buyer.css"> 
     <a href="agent_ratings.php">Back to Agent Ratings</a>
 
-   
 </head>

@@ -3,6 +3,10 @@ require_once 'MortgageCalculatorController.php';
 
 $calculatorManager = new MortgageCalculatorManager();
 
+if (isset($_GET['calc'])){
+    $calc = floatval($_GET['calc']);
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['calculate'])) {
     $loanAmount = isset($_POST['loan_amount']) ? floatval($_POST['loan_amount']) : 0;
     $interestRate = isset($_POST['interest_rate']) ? floatval($_POST['interest_rate']) : 0;
@@ -37,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['calculate'])) {
 
     <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
         <label for="loan_amount">Loan Amount:</label>
-        <input type="number" id="loan_amount" name="loan_amount" step="0.01" required><br><br>
+        <input type="number" id="loan_amount" name="loan_amount" step="0.01" value="<?php echo $calc; ?>"><br><br>
         <label for="interest_rate">Interest Rate (% per annum):</label>
         <input type="number" id="interest_rate" name="interest_rate" step="0.01" required><br><br>
         <label for="loan_term">Loan Term:</label>

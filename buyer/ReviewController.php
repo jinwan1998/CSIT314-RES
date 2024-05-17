@@ -14,6 +14,8 @@
             $stmt->bind_param("iiis", $user_id, $agent_id, $rating, $comments);
 
             if ($stmt->execute()) {
+                $interaction_query = "INSERT INTO Interactions (user_id, agent_id, interaction_type) VALUES (?, ?, 'Rate')";
+                $this->conn->query($interaction_query);
                 header("Location: agent_ratings.php");
                 exit();
             } else {

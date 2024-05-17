@@ -17,9 +17,6 @@ $user_id = $_SESSION['user_id'];
 // Query to fetch user information
 $user_query = "SELECT * FROM Users WHERE user_id = $user_id";
 $user_result = $conn->query($user_query);
-
-// Close database connection
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -62,3 +59,5 @@ $conn->close();
     </table>
 </body>
 </html>
+
+<?php $conn->close() ?>

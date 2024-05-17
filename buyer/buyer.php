@@ -26,15 +26,16 @@ $buyerController = new BuyerController($conn, $_SESSION['user_id']);
 
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['listing_id'])) {
     $listing_id = $_GET['listing_id'];
-    $buyer_id = $_SESSION['user_id'];
     $buyerController->saveListing($listing_id);
 }
 
-if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_listing_id'])) {
-    $listing_id = $_GET['remove_listing_id'];
-    $buyer_id = $_SESSION['user_id'];
-    $buyerController->removeSavedListing($listing_id);
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_save_id'])) {
+    $save_id = $_GET['remove_save_id'];
+    $buyerController->removeSavedListing($save_id);
 }
+
+// Get the current page number from the query parameter, default to 1 if not set
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
 ?>
 
 <!DOCTYPE html>
@@ -78,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['remove_listing_id'])) {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $buyerController->displayListing(); ?>
+                    <?php $buyerController->displayListing($page); ?>
                 </tbody>
             </table>
         </section>

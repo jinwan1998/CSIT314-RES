@@ -69,6 +69,8 @@ include '../dbconnect.php';
                 ?>
             </tbody>
         </table>
+        
+        <p><a href="create_listing.php">Create New Listing</a></p>
 
         <h2>Reviews about Me</h2>
         <table>
@@ -101,8 +103,6 @@ include '../dbconnect.php';
                 ?>
             </tbody>
         </table>
-
-        <p><a href="create_listing.php">Create New Listing</a></p>
     </main>
 
     <footer>
